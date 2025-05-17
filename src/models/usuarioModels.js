@@ -1,63 +1,53 @@
 const { DataTypes } = require("sequelize");
 const conexao = require("../../database");
 
-console.log("Iniciando definição do modelo Usuario...");
 const Usuario = conexao.define(
-  "usuarios",
+  "Usuario",  // nome do model (sempre singular, convenção)
   {
     id: {
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-      type: DataTypes.INTEGER,
-    },
-    permissao: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
+    },  
     nome: {
-      field: "nome",
       type: DataTypes.STRING,
       allowNull: false,
     },
     email: {
-      field: "email",
+      type: DataTypes.STRING,
+      allowNull: false,
+    },   
+       senha: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    telefone: {
-      field: "telefone",
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    senha: {
-      field: "senha",
-      type: DataTypes.STRING,
-      unique: true, // Essa opção garante unicidade
-      allowNull: false,
-    },
-    usuarioId: {
-      field: "usuario_id",
+    tipo_Usuario: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: "usuarios",
-        key: "id",
-      },
     },
+    matricula: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    
   },
   {
-    createdAt: false,
-    updatedAt: false,
+    tableName: "usuarios", // nome exato da tabela no banco
+    timestamps: false,
   }
 );
 
-// Relacionamento
-if (Usuario) {
-  //Usuario.hasOne(Usuario, { foreignKey: 'usuarioId' });
-  Usuario.belongsTo(Usuario, { as: "referencia", foreignKey: "usuarioId" });
-  console.log("Relacionamento Permissao -> Usuario definido!");
-} else {
-  console.error("Erro: Modelo permissao não encontrado!");
-}
+// Definindo relacionamento (auto-relacionamento)
+//Usuario.belongsTo(Usuario, { as: "referencia", foreignKey: "usuario_id" });
 
 module.exports = Usuario;
+
+//referenciar dentro da classe aluno
+/*usuario_id: {  // aqui usa o mesmo nome da coluna no banco
+      type: DataTypes.INTEGER,
+      allowNull: true, // Se pode ser nulo (ex: usuário raiz)
+      references: {
+        model: "usuarios", // nome exato da tabela no banco
+        key: "id",
+      },
+    },*/

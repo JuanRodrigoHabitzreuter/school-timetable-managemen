@@ -6,27 +6,38 @@ class ControllerUsuario {
     const { email, senha } = req.body;
 
     if (!email || !senha) {
-      return res.status(401).json({ message: "E-mail ou senha inválido" });
+      return res.status(400).json({ message: "Email e senha são obrigatórios" });
     }
 
-    const { dataValues: cliente } = await servico.PegarUmPorEmail(email);
+    try {
+      const usuario = await servico.Login(email, senha); // novo método no serviço
 
-    if (!cliente) {
-      console.log("erro1");
-      return res.status(401).json({ message: "E-mail ou senha inválido" }); // const email = req.body.email;
+      const token = jwt.sign(
+        {
+          id: usuario.id,
+          email: usuario.email,
+          nome: usuario.nome,
+          permissao: usuario.permissao,
+        },
+        config.secret,
+        { expiresIn: "1d" }
+      );
+
+      return res.status(200).json({
+        message: "Login realizado com sucesso",
+        token,
+        usuario: {
+          id: usuario.id,
+          nome: usuario.nome,
+          email: usuario.email,
+          telefone: usuario.telefone,
+          permissao: usuario.permissao,
+        },
+      });
+    } catch (error) {
+      console.error("Erro no login:", error);
+      return res.status(401).json({ message: error.message || "E-mail ou senha inválidos" });
     }
-
-    if (!(await bcrypt.compare(senha, cliente.senha))) {
-      console.log("erro2");
-      return res.status(401).json({ message: "E-mail ou senha inválido" }); // const senha = req.body.senha;
-    }
-
-    const token = jwt.sign(
-      { id: cliente.id, email: cliente.email, nome: cliente.nome },
-      config.secret
-    );
-
-    res.json({ token });
   }
 
   async Individuo(req, res) {

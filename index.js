@@ -3,9 +3,12 @@ const express = require("express");
 const app = express();
 const usuarioRouter = require("./src/routers/usuarioRouter");
 const authmiddleware = require("./src/middleware/auth");
+const jwt = require("jsonwebtoken");
 
-app.use(usuarioRouter);
 app.use(express.json()); // Necessário para lidar com JSON no body das requisições
+// Middleware para analisar corpos de requisição URL-encoded (adicione este por precaução)
+app.use(express.urlencoded({ extended: true }));
+app.use(usuarioRouter);
 
 app.post("/consulta", authmiddleware, (req, res) => {
   if (req.isAdministrador || req.isFuncionario) {

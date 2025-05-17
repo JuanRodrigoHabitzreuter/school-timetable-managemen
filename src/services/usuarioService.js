@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const RepositorieUsuario = require("../repositories/usuarioRepositorie");
 const repositorio = new RepositorieUsuario();
 
@@ -13,9 +14,24 @@ class ServicoUsuario {
     return true;
   }
 
-  async Individuo(id, transaction) {
+ async Login(email, senha) {
+  const usuario = await repositorio.pegarUmUsuario(email);
+
+  if (!usuario) {
+    throw new Error("E-mail nao existe");
+  }
+
+  const senhaValida = await bcrypt.compare(senha, usuario.senha);
+  if (!senhaValida) {
+    throw new Error(" senha inválidos");
+  }
+
+  return usuario;
+}
+
+  async Individuo(email, senha) {
     console.log("enviando para o repositorio");
-    return repositorio.Individuo(id, transaction);
+    return repositorio.Individuo(email, senha);
   }
 
   async PegarUmUsuario(email) {

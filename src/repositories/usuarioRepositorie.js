@@ -11,10 +11,16 @@ class RepositorieUsuario {
   }
 
   async pegarUmUsuario(email) {
-    return Usuario.findOne({
-      where: { email },
-    });
+  try {
+    console.log("email", email)
+    const usuario = await Usuario.findOne({ where: { email } });
+    console.log("Usuário encontrado:", usuario);
+    return usuario;
+  } catch (err) {
+    console.error("Erro no findOne:", err);
+    throw err;
   }
+}
 
   async todosUsuarios(transaction) {
     return Usuario.findAll({ transaction });
