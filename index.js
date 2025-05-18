@@ -1,7 +1,7 @@
 const express = require("express");
 //metodo
 const app = express();
-const usuarioRouter = require("./src/routers/usuarioRouter");
+const usuarioRouter = require("./src/routers/user");
 const authmiddleware = require("./src/middleware/auth");
 const jwt = require("jsonwebtoken");
 
